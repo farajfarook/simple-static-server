@@ -29,14 +29,14 @@ func serverCmd() *cobra.Command {
 			ext := cmd.Flags().Lookup("ext").Value.String()
 			e := echo.New()
 			e.GET("/:file", func(c echo.Context) error {
-				return c.File(dir + "/" + c.Param("file") + "." + ext)
+				return c.File(dir + "/" + c.Param("file") + ext)
 			})
 			log.Println("Listening on " + addr)
 			e.Start(addr)
 		},
 	}
 	cmd.Flags().StringP("dir", "r", ".", "Data Directory")
-	cmd.Flags().StringP("ext", "e", "json", "File extension to serve")
+	cmd.Flags().StringP("ext", "e", "", "File extension to serve")
 	cmd.Flags().StringP("addr", "a", ":8080", "API listening address")
 	viper.BindPFlag("dir", cmd.Flags().Lookup("dir"))
 	viper.BindPFlag("ext", cmd.Flags().Lookup("ext"))
