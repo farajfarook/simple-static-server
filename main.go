@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 
@@ -22,15 +23,17 @@ func serverCmd() *cobra.Command {
 		Use:   "serve",
 		Short: "Simple Static Server",
 		Run: func(cmd *cobra.Command, args []string) {
-			flags := cmd.Flags()
-			fs := http.FileServer(http.Dir(flags.Lookup("data").Value.String()))
+			addr := cmd.Flags().Lookup("addr").Value.String()
+			dir := cmd.Flags().Lookup("dir").Value.String()
+			fs := http.FileServer(http.Dir(dir))
 			http.Handle("/", fs)
-			http.ListenAndServe(flags.Lookup("addr").Value.String(), nil)
+			log.Println("Listening on " + addr)
+			http.ListenAndServe(addr, nil)
 		},
 	}
-	cmd.Flags().StringP("data", "r", ".", "Data folder")
+	cmd.Flags().StringP("dir", "r", ".", "Data Directory")
 	cmd.Flags().StringP("addr", "a", ":8080", "API listening address")
-	viper.BindPFlag("data", cmd.Flags().Lookup("data"))
+	viper.BindPFlag("dir", cmd.Flags().Lookup("dir"))
 	viper.BindPFlag("addr", cmd.Flags().Lookup("addr"))
 	return cmd
 }
