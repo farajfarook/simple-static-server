@@ -28,8 +28,10 @@ func serverCmd() *cobra.Command {
 			dir := cmd.Flags().Lookup("dir").Value.String()
 			ext := cmd.Flags().Lookup("ext").Value.String()
 			e := echo.New()
-			e.GET("/:file", func(c echo.Context) error {
-				return c.File(dir + "/" + c.Param("file") + ext)
+			e.GET("/*", func(c echo.Context) error {
+				f := dir + c.Request().RequestURI + ext
+				log.Println("Serving " + f)
+				return c.File(f)
 			})
 			log.Println("Listening on " + addr)
 			e.Start(addr)
